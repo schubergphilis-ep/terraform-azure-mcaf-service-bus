@@ -1,0 +1,52 @@
+mock_provider "azurerm" {}
+
+variables {
+  name                = "test-sbns"
+  location            = "westeurope"
+  resource_group_name = "test-rg"
+}
+
+run "namespace_sku_defaults_to_premium" {
+  command = plan
+
+  assert {
+    condition     = azurerm_servicebus_namespace.this.sku == "Premium"
+    error_message = "sku must default to Premium"
+  }
+}
+
+run "namespace_disables_local_auth_by_default" {
+  command = plan
+
+  assert {
+    condition     = azurerm_servicebus_namespace.this.local_auth_enabled == false
+    error_message = "local_auth_enabled must default to false"
+  }
+}
+
+run "namespace_enforces_tls12_by_default" {
+  command = plan
+
+  assert {
+    condition     = azurerm_servicebus_namespace.this.minimum_tls_version == "1.2"
+    error_message = "minimum_tls_version must default to 1.2"
+  }
+}
+
+run "namespace_disables_public_access_by_default" {
+  command = plan
+
+  assert {
+    condition     = azurerm_servicebus_namespace.this.public_network_access_enabled == false
+    error_message = "public_network_access_enabled must default to false"
+  }
+}
+
+run "namespace_sets_capacity_to_1_by_default" {
+  command = plan
+
+  assert {
+    condition     = azurerm_servicebus_namespace.this.capacity == 1
+    error_message = "capacity must default to 1 messaging unit"
+  }
+}
