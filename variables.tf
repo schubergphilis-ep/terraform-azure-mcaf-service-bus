@@ -136,3 +136,21 @@ Map of private endpoints to create for the Service Bus namespace. Requires Premi
 - `private_dns_zone_ids` - List of private DNS zone resource IDs to link. Defaults to empty.
 DESCRIPTION
 }
+
+variable "role_assignments" {
+  type = map(object({
+    role_definition_name = string
+    principal_id         = string
+  }))
+  default     = {}
+  nullable    = false
+  description = <<DESCRIPTION
+Map of Azure RBAC role assignments to create on the Service Bus namespace.
+
+- Key: logical name for the assignment.
+- `role_definition_name` - Built-in role name. Common values: "Azure Service Bus Data Owner", "Azure Service Bus Data Sender", "Azure Service Bus Data Receiver".
+- `principal_id` - Object ID of the principal (managed identity, service principal, user, or group).
+
+Use this to grant non-Azure workloads access by assigning their Entra ID app registration's object ID with the "Azure Service Bus Data Sender" or "Azure Service Bus Data Receiver" role.
+DESCRIPTION
+}

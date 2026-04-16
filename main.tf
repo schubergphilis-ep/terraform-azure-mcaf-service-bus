@@ -70,3 +70,11 @@ resource "azurerm_private_endpoint" "this" {
 
   tags = var.tags
 }
+
+resource "azurerm_role_assignment" "this" {
+  for_each = var.role_assignments
+
+  scope                = azurerm_servicebus_namespace.this.id
+  role_definition_name = each.value.role_definition_name
+  principal_id         = each.value.principal_id
+}
