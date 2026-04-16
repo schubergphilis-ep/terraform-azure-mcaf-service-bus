@@ -50,3 +50,22 @@ run "namespace_sets_capacity_to_1_by_default" {
     error_message = "capacity must default to 1 messaging unit"
   }
 }
+
+run "namespace_sets_partitions_to_1_by_default" {
+  command = plan
+
+  assert {
+    condition     = azurerm_servicebus_namespace.this.premium_messaging_partitions == 1
+    error_message = "premium_messaging_partitions must default to 1 for fault tolerance"
+  }
+}
+
+run "namespace_rejects_invalid_sku" {
+  command = plan
+
+  variables {
+    sku = "Enterprise"
+  }
+
+  expect_failures = [var.sku]
+}
