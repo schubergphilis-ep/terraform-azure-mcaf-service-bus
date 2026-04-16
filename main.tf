@@ -111,6 +111,38 @@ resource "azurerm_servicebus_namespace_customer_managed_key" "this" {
   depends_on = [azurerm_role_assignment.cmk]
 }
 
+resource "azurerm_servicebus_topic" "this" {
+  for_each = var.topics
+
+  name         = each.key
+  namespace_id = azurerm_servicebus_namespace.this.id
+
+  max_size_in_megabytes         = each.value.max_size_in_megabytes
+  max_message_size_in_kilobytes = each.value.max_message_size_in_kilobytes
+  default_message_ttl           = each.value.default_message_ttl
+  requires_duplicate_detection  = each.value.requires_duplicate_detection
+  support_ordering              = each.value.support_ordering
+  auto_delete_on_idle           = each.value.auto_delete_on_idle
+}
+
+resource "azurerm_servicebus_subscription" "this" {
+  for_each = local.subscriptions
+
+  name     = each.value.sub_key
+  topic_id = azurerm_servicebus_topic.this[each.value.topic_key].id
+
+  max_delivery_count                        = each.value.config.max_delivery_count
+  lock_duration                             = each.value.config.lock_duration
+  requires_session                          = each.value.config.requires_session
+  default_message_ttl                       = each.value.config.default_message_ttl
+  dead_lettering_on_message_expiration      = each.value.config.dead_lettering_on_message_expiration
+  dead_lettering_on_filter_evaluation_error = each.value.config.dead_lettering_on_filter_evaluation_error
+  batched_operations_enabled                = each.value.config.batched_operations_enabled
+  forward_to                                = each.value.config.forward_to
+  forward_dead_lettered_messages_to         = each.value.config.forward_dead_lettered_messages_to
+  auto_delete_on_idle                       = each.value.config.auto_delete_on_idle
+}
+
 resource "azurerm_servicebus_queue" "this" {
   for_each = var.queues
 

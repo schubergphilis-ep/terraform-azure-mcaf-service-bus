@@ -114,11 +114,53 @@ Network rule set configuration. This block is always applied — the module enfo
 DESCRIPTION
 }
 
-# Placeholder — will be replaced with full type definition in Task 9
 variable "topics" {
-  type        = any
+  type = map(object({
+    max_size_in_megabytes                   = optional(number, 1024)
+    max_message_size_in_kilobytes           = optional(number, null)
+    default_message_ttl                     = optional(string, null)
+    requires_duplicate_detection            = optional(bool, false)
+    duplicate_detection_history_time_window = optional(string, "PT10M")
+    support_ordering                        = optional(bool, false)
+    auto_delete_on_idle                     = optional(string, null)
+
+    subscriptions = optional(map(object({
+      max_delivery_count                        = optional(number, 10)
+      lock_duration                             = optional(string, "PT1M")
+      requires_session                          = optional(bool, false)
+      default_message_ttl                       = optional(string, null)
+      dead_lettering_on_message_expiration      = optional(bool, true)
+      dead_lettering_on_filter_evaluation_error = optional(bool, true)
+      batched_operations_enabled                = optional(bool, true)
+      forward_to                                = optional(string, null)
+      forward_dead_lettered_messages_to         = optional(string, null)
+      auto_delete_on_idle                       = optional(string, null)
+    })), {})
+  }))
   default     = {}
-  description = "Map of Service Bus topics to create. Placeholder — full type definition with topic and subscription attributes will be replaced in Task 9."
+  nullable    = false
+  description = <<DESCRIPTION
+Map of Service Bus topics to create. The map key is the topic name. Each topic can optionally contain a subscriptions map.
+
+- `max_size_in_megabytes` - Max topic size in MB. Defaults to `1024`.
+- `max_message_size_in_kilobytes` - Max message size in KB (Premium only). Defaults to `null`.
+- `default_message_ttl` - Message TTL as ISO 8601. `null` = no expiry.
+- `requires_duplicate_detection` - Enable duplicate detection. Defaults to `false`.
+- `duplicate_detection_history_time_window` - Duplicate detection window. Defaults to `"PT10M"`.
+- `support_ordering` - Enable message ordering support. Defaults to `false`.
+- `auto_delete_on_idle` - ISO 8601 idle interval before auto-deletion. `null` = disabled.
+- `subscriptions` - (Optional) Map of subscriptions. Key is the subscription name.
+  - `max_delivery_count` - Max delivery attempts before dead-lettering. Defaults to `10`.
+  - `lock_duration` - Lock duration as ISO 8601. Defaults to `"PT1M"`.
+  - `requires_session` - Require sessions. Defaults to `false`.
+  - `default_message_ttl` - Message TTL as ISO 8601. `null` = no expiry.
+  - `dead_lettering_on_message_expiration` - Dead-letter expired messages. Defaults to `true`.
+  - `dead_lettering_on_filter_evaluation_error` - Dead-letter on filter failure. Defaults to `true`.
+  - `batched_operations_enabled` - Enable batched operations. Defaults to `true`.
+  - `forward_to` - Queue or topic name to forward messages to. `null` = disabled.
+  - `forward_dead_lettered_messages_to` - Queue or topic to forward dead-lettered messages to. `null` = disabled.
+  - `auto_delete_on_idle` - ISO 8601 idle interval before auto-deletion. `null` = disabled.
+DESCRIPTION
 }
 
 variable "private_endpoints" {
