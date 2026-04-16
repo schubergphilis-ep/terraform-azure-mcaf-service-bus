@@ -141,6 +141,10 @@ resource "azurerm_servicebus_subscription" "this" {
   forward_to                                = each.value.config.forward_to
   forward_dead_lettered_messages_to         = each.value.config.forward_dead_lettered_messages_to
   auto_delete_on_idle                       = each.value.config.auto_delete_on_idle
+
+  # Ensure all queues exist before any subscription is created, so that
+  # forward_to and forward_dead_lettered_messages_to queue references are always resolvable.
+  depends_on = [azurerm_servicebus_queue.this]
 }
 
 resource "azurerm_servicebus_queue" "this" {
