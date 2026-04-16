@@ -191,6 +191,17 @@ Map of Service Bus topics to create. The map key is the topic name. Each topic c
       - `to` - Send-to address.
       - `properties` - Map of user-defined properties for matching.
 DESCRIPTION
+  validation {
+    condition = alltrue(flatten([
+      for topic in values(var.topics) : [
+        for sub in values(topic.subscriptions) : [
+          for rule in values(sub.rules) :
+          contains(["SqlFilter", "CorrelationFilter"], rule.filter_type)
+        ]
+      ]
+    ]))
+    error_message = "Each rule's filter_type must be 'SqlFilter' or 'CorrelationFilter'."
+  }
 }
 
 variable "private_endpoints" {
