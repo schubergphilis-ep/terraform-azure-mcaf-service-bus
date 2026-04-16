@@ -23,6 +23,22 @@ resource "azurerm_servicebus_namespace" "this" {
     }
   }
 
+  network_rule_set {
+    default_action                = var.network_rule_set.default_action
+    trusted_services_allowed      = var.network_rule_set.trusted_services_allowed
+    public_network_access_enabled = var.public_network_access_enabled
+    ip_rules                      = var.network_rule_set.ip_rules
+
+    dynamic "network_rules" {
+      for_each = var.network_rule_set.network_rules
+
+      content {
+        subnet_id                            = network_rules.value.subnet_id
+        ignore_missing_vnet_service_endpoint = network_rules.value.ignore_missing_vnet_service_endpoint
+      }
+    }
+  }
+
   tags = merge(
     var.tags,
     { "Resource Type" = "Service Bus Namespace" }

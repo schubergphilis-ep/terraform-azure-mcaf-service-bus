@@ -90,6 +90,29 @@ variable "user_assigned_identities" {
   description = "List of user-assigned managed identity resource IDs to assign to the namespace."
 }
 
+variable "network_rule_set" {
+  type = object({
+    default_action           = optional(string, "Deny")
+    trusted_services_allowed = optional(bool, true)
+    ip_rules                 = optional(set(string), [])
+    network_rules = optional(list(object({
+      subnet_id                            = string
+      ignore_missing_vnet_service_endpoint = optional(bool, false)
+    })), [])
+  })
+  default     = {}
+  description = <<DESCRIPTION
+Network rule set configuration for the Service Bus namespace.
+
+- `default_action` - Default action when no rule matches. Defaults to `"Deny"`.
+- `trusted_services_allowed` - Allow Azure services (Functions, Logic Apps, Event Grid) to bypass rules. Defaults to `true`.
+- `ip_rules` - Set of public IP/CIDR ranges allowed to connect. Defaults to empty.
+- `network_rules` - List of VNet subnet rules.
+  - `subnet_id` - Resource ID of the subnet.
+  - `ignore_missing_vnet_service_endpoint` - Ignore if VNet service endpoint is missing. Defaults to `false`.
+DESCRIPTION
+}
+
 # Placeholder — will be replaced with full type definition in Task 9
 variable "topics" {
   type        = any
