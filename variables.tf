@@ -135,6 +135,22 @@ variable "topics" {
       forward_to                                = optional(string, null)
       forward_dead_lettered_messages_to         = optional(string, null)
       auto_delete_on_idle                       = optional(string, null)
+      rules = optional(map(object({
+        filter_type = string
+        sql_filter  = optional(string, null)
+        action      = optional(string, null)
+        correlation_filter = optional(object({
+          content_type        = optional(string, null)
+          correlation_id      = optional(string, null)
+          label               = optional(string, null)
+          message_id          = optional(string, null)
+          reply_to            = optional(string, null)
+          reply_to_session_id = optional(string, null)
+          session_id          = optional(string, null)
+          to                  = optional(string, null)
+          properties          = optional(map(string), {})
+        }), null)
+      })), {})
     })), {})
   }))
   default     = {}
@@ -160,6 +176,20 @@ Map of Service Bus topics to create. The map key is the topic name. Each topic c
   - `forward_to` - Queue or topic name to forward messages to. `null` = disabled.
   - `forward_dead_lettered_messages_to` - Queue or topic to forward dead-lettered messages to. `null` = disabled.
   - `auto_delete_on_idle` - ISO 8601 idle interval before auto-deletion. `null` = disabled.
+  - `rules` - (Optional) Map of subscription rules. Key is the rule name.
+    - `filter_type` - (Required) Type of filter: `"SqlFilter"` or `"CorrelationFilter"`.
+    - `sql_filter` - SQL expression. Required when `filter_type` is `"SqlFilter"`.
+    - `action` - (Optional) SQL action expression to run on matched messages.
+    - `correlation_filter` - (Optional) Structured filter. Required when `filter_type` is `"CorrelationFilter"`. At least one field must be set.
+      - `content_type` - Content type of the message.
+      - `correlation_id` - Correlation identifier.
+      - `label` - Application-specific label.
+      - `message_id` - Message identifier.
+      - `reply_to` - Reply-to address.
+      - `reply_to_session_id` - Reply-to session identifier.
+      - `session_id` - Session identifier.
+      - `to` - Send-to address.
+      - `properties` - Map of user-defined properties for matching.
 DESCRIPTION
 }
 
