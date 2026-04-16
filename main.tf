@@ -78,3 +78,24 @@ resource "azurerm_role_assignment" "this" {
   role_definition_name = each.value.role_definition_name
   principal_id         = each.value.principal_id
 }
+
+resource "azurerm_role_assignment" "cmk" {
+  count = var.cmk != null ? 1 : 0
+
+  scope                = var.cmk.key_vault_id
+  role_definition_name = "Key Vault Crypto Service Encryption User"
+  principal_id = (
+    var.cmk.user_assigned_identity_id != null
+    ? var.cmk.user_assigned_identity_id
+    : azurerm_servicebus_namespace.this.identity[0].principal_id
+  )
+}
+
+resource "azurerm_servicebus_namespace_customer_managed_key" "this" {
+  count = var.cmk != null ? 1 : 0
+
+  namespace_id     = azurerm_servicebus_namespace.this.id
+  key_vault_key_id = var.cmk.key_vault_key_id
+
+  depends_on = [azurerm_role_assignment.cmk]
+}

@@ -154,3 +154,19 @@ Map of Azure RBAC role assignments to create on the Service Bus namespace.
 Use this to grant non-Azure workloads access by assigning their Entra ID app registration's object ID with the "Azure Service Bus Data Sender" or "Azure Service Bus Data Receiver" role.
 DESCRIPTION
 }
+
+variable "cmk" {
+  type = object({
+    key_vault_id              = string
+    key_vault_key_id          = string
+    user_assigned_identity_id = optional(string)
+  })
+  default     = null
+  description = <<DESCRIPTION
+Customer-managed key (CMK) configuration for namespace encryption. Requires Premium SKU and an identity on the namespace.
+
+- `key_vault_id` - Resource ID of the Key Vault (used to scope the Key Vault Crypto Service Encryption User role assignment).
+- `key_vault_key_id` - Full versioned key URI from the Key Vault (e.g. `https://myvault.vault.azure.net/keys/mykey/abc123`).
+- `user_assigned_identity_id` - (Optional) Resource ID of the user-assigned identity to use for Key Vault access. If omitted, the system-assigned identity is used.
+DESCRIPTION
+}
