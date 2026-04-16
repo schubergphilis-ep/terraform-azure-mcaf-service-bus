@@ -120,3 +120,19 @@ variable "topics" {
   default     = {}
   description = "Map of Service Bus topics to create. Placeholder — full type definition with topic and subscription attributes will be replaced in Task 9."
 }
+
+variable "private_endpoints" {
+  type = map(object({
+    subnet_id            = string
+    private_dns_zone_ids = optional(list(string), [])
+  }))
+  default     = {}
+  nullable    = false
+  description = <<DESCRIPTION
+Map of private endpoints to create for the Service Bus namespace. Requires Premium SKU.
+
+- Key: logical name used in the private endpoint resource name.
+- `subnet_id` - Resource ID of the subnet to place the private endpoint in.
+- `private_dns_zone_ids` - List of private DNS zone resource IDs to link. Defaults to empty.
+DESCRIPTION
+}

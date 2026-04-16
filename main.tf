@@ -43,3 +43,30 @@ resource "azurerm_servicebus_namespace" "this" {
     { "Resource Type" = "Service Bus Namespace" }
   )
 }
+
+resource "azurerm_private_endpoint" "this" {
+  for_each = var.private_endpoints
+
+  name                = each.key
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  subnet_id           = each.value.subnet_id
+
+  private_service_connection {
+    name                           = each.key
+    private_connection_resource_id = azurerm_servicebus_namespace.this.id
+    subresource_names              = ["namespace"]
+    is_manual_connection           = false
+  }
+
+  dynamic "private_dns_zone_group" {
+    for_each = length(each.value.private_dns_zone_ids) > 0 ? [1] : []
+
+    content {
+      name                 = "default"
+      private_dns_zone_ids = each.value.private_dns_zone_ids
+    }
+  }
+
+  tags = var.tags
+}
