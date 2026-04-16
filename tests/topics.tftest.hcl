@@ -50,6 +50,11 @@ run "subscription_inherits_defaults" {
     condition     = azurerm_servicebus_subscription.this["events/payments"].dead_lettering_on_filter_evaluation_error == true
     error_message = "dead_lettering_on_filter_evaluation_error must default to true"
   }
+
+  assert {
+    condition     = azurerm_servicebus_subscription.this["events/payments"].batched_operations_enabled == true
+    error_message = "batched_operations_enabled must default to true"
+  }
 }
 
 run "subscription_respects_override" {

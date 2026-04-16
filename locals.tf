@@ -23,7 +23,7 @@ locals {
   subscriptions = {
     for item in flatten([
       for topic_key, topic in var.topics : [
-        for sub_key, sub in try(coalesce(topic.subscriptions, {}), {}) : {
+        for sub_key, sub in topic.subscriptions : {
           topic_key = topic_key
           sub_key   = sub_key
           config    = sub
