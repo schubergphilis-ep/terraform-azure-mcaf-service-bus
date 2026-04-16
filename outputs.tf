@@ -21,6 +21,11 @@ output "identity" {
   description = "The system-assigned managed identity principal and tenant IDs. Null when system-assigned identity is disabled."
 }
 
+output "user_assigned_identity_ids" {
+  value       = var.user_assigned_identities
+  description = "List of user-assigned managed identity resource IDs assigned to the namespace. Empty when no user-assigned identities are configured."
+}
+
 output "queue_ids" {
   value       = { for k, v in azurerm_servicebus_queue.this : k => v.id }
   description = "Map of queue name to queue resource ID."

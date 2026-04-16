@@ -173,7 +173,7 @@ variable "private_endpoints" {
   description = <<DESCRIPTION
 Map of private endpoints to create for the Service Bus namespace. Requires Premium SKU.
 
-- Key: logical name used in the private endpoint resource name.
+- Key: logical name used as the private endpoint resource name. Must be 1–80 characters, alphanumeric, hyphens, or underscores, and must start with a letter.
 - `subnet_id` - Resource ID of the subnet to place the private endpoint in.
 - `private_dns_zone_ids` - List of private DNS zone resource IDs to link. Defaults to empty.
 DESCRIPTION
