@@ -147,6 +147,32 @@ resource "azurerm_servicebus_subscription" "this" {
   depends_on = [azurerm_servicebus_queue.this]
 }
 
+resource "azurerm_servicebus_subscription_rule" "this" {
+  for_each = local.subscription_rules
+
+  name            = each.value.rule_key
+  subscription_id = azurerm_servicebus_subscription.this["${each.value.topic_key}/${each.value.sub_key}"].id
+  filter_type     = each.value.config.filter_type
+  sql_filter      = each.value.config.filter_type == "SqlFilter" ? each.value.config.sql_filter : null
+  action          = each.value.config.action
+
+  dynamic "correlation_filter" {
+    for_each = each.value.config.filter_type == "CorrelationFilter" ? [each.value.config.correlation_filter] : []
+
+    content {
+      content_type        = correlation_filter.value.content_type
+      correlation_id      = correlation_filter.value.correlation_id
+      label               = correlation_filter.value.label
+      message_id          = correlation_filter.value.message_id
+      reply_to            = correlation_filter.value.reply_to
+      reply_to_session_id = correlation_filter.value.reply_to_session_id
+      session_id          = correlation_filter.value.session_id
+      to                  = correlation_filter.value.to
+      properties          = correlation_filter.value.properties
+    }
+  }
+}
+
 resource "azurerm_servicebus_queue" "this" {
   for_each = var.queues
 
