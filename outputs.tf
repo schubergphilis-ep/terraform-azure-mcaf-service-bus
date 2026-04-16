@@ -40,3 +40,8 @@ output "subscription_ids" {
   value       = { for k, v in azurerm_servicebus_subscription.this : k => v.id }
   description = "Map of 'topic/subscription' key to subscription resource ID."
 }
+
+output "subscription_rule_ids" {
+  value       = { for k, v in azurerm_servicebus_subscription_rule.this : k => v.id }
+  description = "Map of 'topic/subscription/rule' key to subscription rule resource ID."
+}
