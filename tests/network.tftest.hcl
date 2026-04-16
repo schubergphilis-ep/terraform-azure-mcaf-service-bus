@@ -38,3 +38,23 @@ run "network_rule_set_custom_ip_rule" {
     error_message = "ip_rules must contain the specified CIDR"
   }
 }
+
+run "network_rule_set_vnet_subnet_rule" {
+  command = plan
+
+  variables {
+    network_rule_set = {
+      network_rules = [
+        {
+          subnet_id                            = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet/subnets/snet"
+          ignore_missing_vnet_service_endpoint = false
+        }
+      ]
+    }
+  }
+
+  assert {
+    condition     = length(azurerm_servicebus_namespace.this.network_rule_set[0].network_rules) == 1
+    error_message = "network_rules must contain the specified subnet rule"
+  }
+}

@@ -101,8 +101,9 @@ variable "network_rule_set" {
     })), [])
   })
   default     = {}
+  nullable    = false
   description = <<DESCRIPTION
-Network rule set configuration for the Service Bus namespace.
+Network rule set configuration. This block is always applied — the module enforces a deny-by-default posture. Pass `{}` to accept all defaults.
 
 - `default_action` - Default action when no rule matches. Defaults to `"Deny"`.
 - `trusted_services_allowed` - Allow Azure services (Functions, Logic Apps, Event Grid) to bypass rules. Defaults to `true`.
