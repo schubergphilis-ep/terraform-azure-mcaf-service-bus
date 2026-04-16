@@ -155,6 +155,43 @@ Use this to grant non-Azure workloads access by assigning their Entra ID app reg
 DESCRIPTION
 }
 
+variable "queues" {
+  type = map(object({
+    max_delivery_count                      = optional(number, 10)
+    max_size_in_megabytes                   = optional(number, 1024)
+    max_message_size_in_kilobytes           = optional(number, null)
+    default_message_ttl                     = optional(string, null)
+    lock_duration                           = optional(string, "PT1M")
+    requires_duplicate_detection            = optional(bool, false)
+    duplicate_detection_history_time_window = optional(string, "PT10M")
+    requires_session                        = optional(bool, false)
+    dead_lettering_on_message_expiration    = optional(bool, true)
+    batched_operations_enabled              = optional(bool, true)
+    auto_delete_on_idle                     = optional(string, null)
+    forward_to                              = optional(string, null)
+    forward_dead_lettered_messages_to       = optional(string, null)
+  }))
+  default     = {}
+  nullable    = false
+  description = <<DESCRIPTION
+Map of Service Bus queues to create. The map key is the queue name.
+
+- `max_delivery_count` - Max delivery attempts before dead-lettering. Defaults to `10`.
+- `max_size_in_megabytes` - Max queue size in MB (1024–81920 for Premium). Defaults to `1024`.
+- `max_message_size_in_kilobytes` - Max message size in KB (Premium only, up to 102400). Defaults to `null`.
+- `default_message_ttl` - Message time-to-live as ISO 8601 (e.g. `"PT1H"`). `null` = no expiry.
+- `lock_duration` - Message lock duration as ISO 8601 (max `"PT5M"`). Defaults to `"PT1M"`.
+- `requires_duplicate_detection` - Enable duplicate detection. Defaults to `false`.
+- `duplicate_detection_history_time_window` - Duplicate detection window as ISO 8601. Defaults to `"PT10M"`.
+- `requires_session` - Require sessions. Defaults to `false`.
+- `dead_lettering_on_message_expiration` - Dead-letter expired messages. Defaults to `true`.
+- `batched_operations_enabled` - Enable batched operations. Defaults to `true`.
+- `auto_delete_on_idle` - ISO 8601 idle interval before auto-deletion. `null` = disabled.
+- `forward_to` - Queue or topic name to forward messages to. `null` = disabled.
+- `forward_dead_lettered_messages_to` - Queue or topic name to forward dead-lettered messages to. `null` = disabled.
+DESCRIPTION
+}
+
 variable "cmk" {
   type = object({
     key_vault_id              = string
