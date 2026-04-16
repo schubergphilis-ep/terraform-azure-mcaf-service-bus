@@ -41,9 +41,27 @@ module "servicebus" {
     "domain-events" = {
       requires_duplicate_detection = true
       subscriptions = {
-        "payments"      = { max_delivery_count = 5 }
-        "notifications" = {}
-        "audit"         = { forward_to = "deadletter-reprocessing" }
+        "payments" = {
+          max_delivery_count = 5
+          rules = {
+            "orders-only" = {
+              filter_type = "SqlFilter"
+              sql_filter  = "eventType = 'OrderPlaced'"
+            }
+          }
+        }
+        "notifications" = {
+          rules = {
+            "high-value" = {
+              filter_type = "CorrelationFilter"
+              correlation_filter = {
+                label      = "high-value"
+                properties = { source = "orders" }
+              }
+            }
+          }
+        }
+        "audit" = { forward_to = "deadletter-reprocessing" }
       }
     }
   }
