@@ -92,6 +92,7 @@ variable "user_assigned_identities" {
 
 # Placeholder — will be replaced with full type definition in Task 9
 variable "topics" {
-  type    = any
-  default = {}
+  type        = any
+  default     = {}
+  description = "Map of Service Bus topics to create. Placeholder — full type definition with topic and subscription attributes will be replaced in Task 9."
 }

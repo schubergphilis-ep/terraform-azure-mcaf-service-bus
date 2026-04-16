@@ -25,8 +25,6 @@ resource "azurerm_servicebus_namespace" "this" {
 
   tags = merge(
     var.tags,
-    tomap({
-      "Resource Type" = "Service Bus Namespace"
-    })
+    { "Resource Type" = "Service Bus Namespace" }
   )
 }
