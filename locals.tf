@@ -31,4 +31,19 @@ locals {
       ]
     ]) : "${item.topic_key}/${item.sub_key}" => item
   }
+
+  subscription_rules = {
+    for item in flatten([
+      for topic_key, topic in var.topics : [
+        for sub_key, sub in topic.subscriptions : [
+          for rule_key, rule in sub.rules : {
+            topic_key = topic_key
+            sub_key   = sub_key
+            rule_key  = rule_key
+            config    = rule
+          }
+        ]
+      ]
+    ]) : "${item.topic_key}/${item.sub_key}/${item.rule_key}" => item
+  }
 }
