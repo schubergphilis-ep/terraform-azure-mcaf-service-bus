@@ -69,3 +69,17 @@ run "namespace_rejects_invalid_sku" {
 
   expect_failures = [var.sku]
 }
+
+run "namespace_enables_system_identity_by_default" {
+  command = plan
+
+  assert {
+    condition     = length(azurerm_servicebus_namespace.this.identity) > 0
+    error_message = "system-assigned identity must be enabled by default"
+  }
+
+  assert {
+    condition     = azurerm_servicebus_namespace.this.identity[0].type == "SystemAssigned"
+    error_message = "identity type must be SystemAssigned by default"
+  }
+}

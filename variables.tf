@@ -77,3 +77,21 @@ variable "tags" {
   default     = {}
   description = "A map of tags to assign to all resources created by this module."
 }
+
+variable "system_assigned_identity_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether to enable a system-assigned managed identity. Defaults to true."
+}
+
+variable "user_assigned_identities" {
+  type        = list(string)
+  default     = []
+  description = "List of user-assigned managed identity resource IDs to assign to the namespace."
+}
+
+# Placeholder — will be replaced with full type definition in Task 9
+variable "topics" {
+  type    = any
+  default = {}
+}

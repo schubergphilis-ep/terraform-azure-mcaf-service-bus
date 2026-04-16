@@ -9,6 +9,20 @@ resource "azurerm_servicebus_namespace" "this" {
   public_network_access_enabled = var.public_network_access_enabled
   premium_messaging_partitions  = var.sku == "Premium" ? var.premium_messaging_partitions : null
 
+  dynamic "identity" {
+    for_each = coalesce(
+      local.identity_system_assigned_user_assigned,
+      local.identity_system_assigned,
+      local.identity_user_assigned,
+      {}
+    )
+
+    content {
+      type         = identity.value.type
+      identity_ids = identity.value.user_assigned_resource_ids
+    }
+  }
+
   tags = merge(
     var.tags,
     tomap({
