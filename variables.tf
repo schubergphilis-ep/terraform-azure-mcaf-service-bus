@@ -167,6 +167,6 @@ Customer-managed key (CMK) configuration for namespace encryption. Requires Prem
 
 - `key_vault_id` - Resource ID of the Key Vault (used to scope the Key Vault Crypto Service Encryption User role assignment).
 - `key_vault_key_id` - Full versioned key URI from the Key Vault (e.g. `https://myvault.vault.azure.net/keys/mykey/abc123`).
-- `user_assigned_identity_id` - (Optional) Resource ID of the user-assigned identity to use for Key Vault access. If omitted, the system-assigned identity is used.
+- `user_assigned_identity_id` - (Optional) Resource ID of the user-assigned identity to use for Key Vault access. If omitted, the system-assigned identity is used. Required when `system_assigned_identity_enabled = false`.
 DESCRIPTION
 }

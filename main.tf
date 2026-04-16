@@ -89,6 +89,17 @@ resource "azurerm_role_assignment" "cmk" {
     ? var.cmk.user_assigned_identity_id
     : azurerm_servicebus_namespace.this.identity[0].principal_id
   )
+
+  lifecycle {
+    precondition {
+      condition = (
+        var.cmk == null ||
+        var.cmk.user_assigned_identity_id != null ||
+        var.system_assigned_identity_enabled
+      )
+      error_message = "When cmk is set and user_assigned_identity_id is not provided, system_assigned_identity_enabled must be true so the system-assigned identity can access Key Vault."
+    }
+  }
 }
 
 resource "azurerm_servicebus_namespace_customer_managed_key" "this" {
