@@ -171,6 +171,8 @@ resource "azurerm_servicebus_subscription_rule" "this" {
       properties          = correlation_filter.value.properties
     }
   }
+
+  depends_on = [azurerm_servicebus_subscription.this]
 }
 
 resource "azurerm_servicebus_queue" "this" {
